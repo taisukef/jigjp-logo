@@ -1,2 +1,0 @@
-# jigjp-logo
- 
