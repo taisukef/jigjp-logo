@@ -1,0 +1,214 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+<script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+<!--
+<script src="https://rawgit.com/fernandojsg/aframe-teleport-controls/master/dist/aframe-teleport-controls.min.js"></script>
+-->
+<script type="module" src="https://code4fukui.github.io/glb-viewer/mc-controls.js"></script>
+</head><body>
+<a-scene id="scene" background="color: black">
+  <a-camera id="head" position="0 1.7 0" mc-controls look-controls></a-camera>
+  <!--
+  <a-entity id="cameraRig"> 
+    <a-entity id="head" camera position="0 1.7 0" mc-controls look-controls></a-entity>
+    <a-entity oculus-touch-controls="hand:left" x-teleport-controls="button:trigger; collisionEntities:.collidable; cameraRig:#cameraRig; teleportOrigin:#head;"></a-entity>
+    <a-entity oculus-touch-controls="hand:right" x-teleport-controls="button:trigger; collisionEntities:.collidable; cameraRig:#cameraRig; teleportOrigin:#head;"></a-entity>
+  </a-entity>
+-->
+</a-scene>
+
+<script type="module">
+
+const makeElementByShape = (shape, depth, pos) => {
+  const extrudeSettings = {
+    steps: 2,
+    depth,
+    bevelEnabled: false,
+    bevelThickness: .2,
+    bevelSize: .2,
+    bevelOffset: 0,
+    bevelSegments: 4,
+  };
+  const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+  const color = 0xffffff;
+  //const color = 0x333333;
+  //const material = new THREE.MeshBasicMaterial({ color }); // 陰影なし
+  //const material = new THREE.MeshNormalMaterial({ color }); // 法線（テスト用）
+  const material = new THREE.MeshLambertMaterial({ color }); // マット
+  //const material = new THREE.MeshPhongMaterial({ color }); // 光沢
+  //const material = new THREE.MeshToonMaterial({ color }); // トゥーン
+  //const material = new THREE.MeshStandardMaterial({ color }); // 標準
+
+  const mesh = new THREE.Mesh(geometry, material) ;
+  const el = document.createElement("a-entity");
+  el.object3D.add(mesh);
+  if (pos) {
+    el.setAttribute("position", pos);
+  }
+  return el;
+};
+const makeShapeBox = (w, h) => {
+  const shape = new THREE.Shape();
+  shape.moveTo(0, 0);
+  shape.lineTo(0, -h);
+  shape.lineTo(w, -h);
+  shape.lineTo(w, 0);
+  shape.lineTo(0, 0);
+  return shape;
+};
+
+const makeShapeJ = (w) => {
+  const shape = new THREE.Shape();
+  shape.moveTo(0, 0);
+  shape.lineTo(w, 0);
+  shape.lineTo(w, -w * 5);
+  shape.lineTo(-w, -w * 5);
+  shape.lineTo(-w, -w * 4);
+  shape.lineTo(0, -w * 4);
+  return shape;
+};
+const makeShapeG = (w) => {
+  const shape = new THREE.Shape();
+  shape.moveTo(0, 0);
+  shape.lineTo(w * 4, 0);
+  shape.lineTo(w * 4, -w);
+  shape.lineTo(w * 3, -w);
+  shape.lineTo(w * 3, -w * 5);
+  shape.lineTo(0, -w * 5);
+  shape.lineTo(0, -w * 4);
+  shape.lineTo(w * 2, -w * 4);
+  shape.lineTo(w * 2, -w * 3);
+  shape.lineTo(0, -w * 3);
+  shape.lineTo(0, 0);
+  shape.lineTo(w, -w);
+  shape.lineTo(w, -w * 2);
+  shape.lineTo(w * 2, -w * 2);
+  shape.lineTo(w * 2, -w);
+  shape.lineTo(w, -w);
+  return shape;
+};
+const makeShapeP = (w) => {
+  const shape = new THREE.Shape();
+  shape.moveTo(0, 0);
+  shape.lineTo(w * 3, 0);
+  shape.lineTo(w * 3, -w * 3);
+  shape.lineTo(w, -w * 3);
+  shape.lineTo(w, -w * 5);
+  shape.lineTo(0, -w * 5);
+  shape.lineTo(0, 0);
+  shape.lineTo(w, -w);
+  shape.lineTo(w, -w * 2);
+  shape.lineTo(w * 2, -w * 2);
+  shape.lineTo(w * 2, -w);
+  shape.lineTo(w, -w);
+  return shape;
+};
+/*
+const JIGJP_LOGO = [ // 16x7
+	"0101000000010000",
+	"0000000000000000",
+	"0101011110010111",
+	"0101010100010101",
+	"0101011101010111",
+	"0100000100010100",
+	"1100011100110100",
+];
+*/
+const makeJIGJP = (w) => {
+  const depth = w;
+  const z = 0;
+  const el = document.createElement("a-entity");
+  [
+    makeElementByShape(makeShapeBox(w, w), depth, { x: w * 1, y: w * 0, z }),
+    makeElementByShape(makeShapeJ(w), depth, { x: w * 1, y: -w * 2, z }),
+    makeElementByShape(makeShapeBox(w, w), depth, { x: w * 3, y: w * 0, z }),
+    makeElementByShape(makeShapeBox(w, w * 3), depth, { x: w * 3, y: -w * 2, z }),
+    makeElementByShape(makeShapeG(w), depth, { x: w * 5, y: -w * 2, z }),
+    makeElementByShape(makeShapeBox(w, w), depth, { x: w * 9, y: -w * 4, z }),
+    makeElementByShape(makeShapeBox(w, w), depth, { x: w * 11, y: w * 0, z }),
+    makeElementByShape(makeShapeJ(w), depth, { x: w * 11, y: -w * 2, z }),
+    makeElementByShape(makeShapeP(w), depth, { x: w * 13, y: -w * 2, z }),
+  ].forEach(p => el.appendChild(p));
+  return el;
+};
+const transformJIGJP = (el, w, ratio) => {
+  const blks = el.children;
+  const pos1 = [
+    { x: 1, y: 0, r: 0 },
+    { x: 1, y: -2, r: 0 },
+    { x: 3, y: 0, r: 0 },
+    { x: 3, y: -2, r: 0 },
+    { x: 5, y: -2, r: 0 },
+    { x: 9, y: -4, r: 0 },
+    { x: 11, y: 0, r: 0 },
+    { x: 11, y: -2, r: 0 },
+    { x: 13, y: -2, r: 0 },
+  ];
+  const pos2 = [
+    { x: 1, y: -4, r: 0 },
+    { x: 5, y: -5, r: -90 },
+    { x: 2, y: -4, r: 0 },
+    { x: 3, y: 0, r: -90 },
+    { x: 3, y: 0, r: 0 },
+    { x: 1, y: -2, r: 0 },
+    { x: 4, y: -1, r: 0 },
+    { x: 6, y: -1, r: 0 },
+    { x: 0, y: -4, r: 90 },
+  ];
+  pos2.forEach(p => p.x += 4);
+  const mix = (p1, p2, r) => {
+    const res = [];
+    const names = Object.keys(p1[0]);
+    for (let i = 0; i < p1.length; i++) {
+      const pp1 = p1[i];
+      const pp2 = p2[i];
+      const p = {};
+      names.forEach(n => p[n] = pp1[n] + (pp2[n] - pp1[n]) * r);
+      res[i] = p;
+    }
+    return res;
+  };
+  const cropt = 0;
+  const crop = n => n < cropt ? 0 : (n > 1 - cropt ? 1 : (n - cropt) / (1 - cropt * 2));
+  const exp = n => {
+    const nexp = 15;
+    if (n < 0.5) {
+      const n1 = (n - 0.5) * nexp;
+      return Math.exp(n1) / 2;
+    }
+    const n2 = (0.5 - n) * nexp;
+    return 1 - Math.exp(n2) / 2;
+  };
+  const t = exp(crop(ratio));
+  const pos = mix(pos1, pos2, t);
+  //const pos = pos2;
+  //const pos = pos1;
+  const z = 0;
+  const sin2 = n => Math.pow(Math.sin(n * Math.PI), 2);
+  for (let i = 0; i < pos.length; i++) {
+    const p = pos[i];
+    const bk = blks[i].getAttribute("position");
+    //const flg = i % 2 == 0 ? -1 : 1;
+    const flg = [-1, 1, 1, -1, 1, -1, -1, 1, -1][i];
+    blks[i].setAttribute("position", { x: p.x * w, y: p.y * w, z: flg * sin2(t) / 3 });
+    blks[i].setAttribute("rotation", { x: 0, y: 360 * t * 1, z: p.r });
+  }
+  el.setAttribute("scale", { x: 1, y: (1 + t / 7) * 1, z: 1 });
+};
+
+//const el = makeElementByShape(makeShapeBox(1, 2));
+//const el = makeElementByShape(makeShapeJ(1, 2));
+//const el = makeElementByShape(makeShapeG(1, 2));
+//const el = makeElementByShape(makeShapeP(1, 2));
+const w = .1;
+const el = makeJIGJP(w);
+el.setAttribute("position", { x: -w * 8, y: 2.1, z: -1 });
+scene.appendChild(el);
+
+let t = 0;
+setInterval(() => {
+  const r = Math.cos(t++ / 100) / 2 + .5;
+  transformJIGJP(el, w, r);
+}, 1000 / 60);
+</script>
+
+</body></html>
