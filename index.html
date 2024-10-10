@@ -30,6 +30,7 @@ const makeElementByShape = (shape, depth, pos) => {
   };
   const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
   const color = 0x333333;
+  const wireframe = true;
   //const material = new THREE.MeshBasicMaterial({ color }); // 陰影なし
   //const material = new THREE.MeshNormalMaterial({ color }); // 法線（テスト用）
   const material = new THREE.MeshLambertMaterial({ color }); // マット
@@ -203,11 +204,13 @@ const el = makeJIGJP(w);
 el.setAttribute("position", { x: -w * 8, y: 2.1, z: -1 });
 scene.appendChild(el);
 
-let t = 0;
-setInterval(() => {
-  const r = Math.cos(t++ / 100) / 2 + .5;
+const draw = () => {
+  const t = performance.now() / 1000;
+  const r = Math.cos(t) / 2 + .5;
   transformJIGJP(el, w, r);
-}, 1000 / 60);
+  requestAnimationFrame(draw);
+};
+draw();
 </script>
 
 </body></html>
