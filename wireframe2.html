@@ -7,7 +7,7 @@
 -->
 <script type="module" src="https://code4fukui.github.io/glb-viewer/mc-controls.js"></script>
 </head><body>
-<a-scene id="scene" background="color: black">
+<a-scene id="scene" background="color: white">
   <a-camera id="head" position="0 1.7 0" mc-controls look-controls></a-camera>
   <!--
   <a-entity id="cameraRig"> 
@@ -29,8 +29,8 @@ const makeElementByObject = (obj, pos) => {
   return el;
 };
 const makeWireframe = (points2d, w) => {
-  //const color = 0x333333;
-  const color = 0xffffff;
+  const color = 0x333333;
+  //const color = 0xffffff;
   const material = new THREE.LineBasicMaterial({ color, linewidth: 3 });
   const h = -w;
   const points = [];
