@@ -33,7 +33,7 @@ const parseColor = (name, defaultColor) => {
 };
 const logoColor = parseColor("color", 0x333333);
 const bgColor = parseColor("bgcolor", 0xffffff);
-const immersiveLogoBottomY = 1.2;
+const immersiveLogoBottomY = 2;
 scene.setAttribute("background", `color: #${bgColor.toString(16).padStart(6, "0")}`);
 
 const isImmersiveMode = () => scene.is("ar-mode") || scene.is("vr-mode");
