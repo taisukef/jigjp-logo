@@ -203,6 +203,13 @@ const transformJIGJP = (el, w, ratio) => {
   el.setAttribute("scale", { x: 1, y: (1 + t / 7) * 1, z: 1 });
 };
 
+AFRAME.registerComponent("jigjp-animation", {
+  tick: function (time) {
+    const r = Math.cos(time / 1000) / 2 + .5;
+    transformJIGJP(this.el, w, r);
+  },
+});
+
 //const el = makeElementByShape(makeShapeBox(1, 2));
 //const el = makeElementByShape(makeShapeJ(1, 2));
 //const el = makeElementByShape(makeShapeG(1, 2));
@@ -211,6 +218,7 @@ const w = .1;
 const el = makeJIGJP(w);
 el.id = "logo";
 el.setAttribute("position", { x: -w * 8, y: 2.1, z: -1 });
+el.setAttribute("jigjp-animation", "");
 scene.appendChild(el);
 
 scene.addEventListener("enter-vr", () => {
@@ -218,7 +226,7 @@ scene.addEventListener("enter-vr", () => {
     return;
   }
   scene.removeAttribute("background");
-  el.setAttribute("position", { x: -w * 8, y: 0.35, z: -1 });
+  el.setAttribute("position", { x: -w * 8, y: 1.35, z: -1.5 });
 });
 
 scene.addEventListener("exit-vr", () => {
@@ -226,11 +234,6 @@ scene.addEventListener("exit-vr", () => {
   el.setAttribute("position", { x: -w * 8, y: 2.1, z: -1 });
 });
 
-let t = 0;
-setInterval(() => {
-  const r = Math.cos(t++ / 100) / 2 + .5;
-  transformJIGJP(el, w, r);
-}, 1000 / 60);
 </script>
 
 </body></html>
