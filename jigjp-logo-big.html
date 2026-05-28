@@ -6,7 +6,14 @@
 </head>
 <body>
 
-<a-scene id="scene">
+<a-scene
+  id="scene"
+  renderer="alpha: true"
+  webxr="optionalFeatures: hit-test, local-floor, dom-overlay; overlayElement: body"
+  xr-mode-ui="XRMode: ar">
+<a-camera id="head" position="0 1.7 0" look-controls></a-camera>
+<a-entity light="type: ambient; intensity: 0.6"></a-entity>
+<a-entity light="type: directional; intensity: 0.8" position="0 8 3"></a-entity>
 
 <!-- 前に大きいロゴ 箱1辺2m-->
 <a-box position="-14 13 -3" rotation="0 0 0" width="2" height="2" depth="2" color="#AAAAAA"></a-box>
@@ -97,9 +104,22 @@
 <a-box position="-0.50 1.55 0.50" rotation="0 0 0" width="0.1" height="0.1" depth="0.1" color="#FFFFFF"></a-box>
 
 <!-- 床 -->
-<a-plane rotation="-90 0 0" width="50" height="50" color="#333333"></a-plane>
+<a-plane id="floor" rotation="-90 0 0" width="50" height="50" color="#333333"></a-plane>
 
 </a-scene>				
+
+<script type="module">
+scene.addEventListener("enter-vr", () => {
+  if (!scene.is("ar-mode")) {
+    return;
+  }
+  floor.setAttribute("visible", false);
+});
+
+scene.addEventListener("exit-vr", () => {
+  floor.setAttribute("visible", true);
+});
+</script>
 
 <!-- sample
 
