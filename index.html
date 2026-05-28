@@ -26,6 +26,15 @@
 
 <script type="module">
 
+const params = new URL(location.href).searchParams;
+const parseColor = (name, defaultColor) => {
+  const color = params.get(name);
+  return color && /^[0-9a-f]{6}$/i.test(color) ? parseInt(color, 16) : defaultColor;
+};
+const logoColor = parseColor("color", 0x333333);
+const bgColor = parseColor("bgcolor", 0xffffff);
+scene.setAttribute("background", `color: #${bgColor.toString(16).padStart(6, "0")}`);
+
 const makeElementByShape = (shape, depth, pos) => {
   const extrudeSettings = {
     steps: 2,
@@ -37,7 +46,7 @@ const makeElementByShape = (shape, depth, pos) => {
     bevelSegments: 4,
   };
   const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-  const color = 0x333333;
+  const color = logoColor;
   const wireframe = true;
   //const material = new THREE.MeshBasicMaterial({ color }); // 陰影なし
   //const material = new THREE.MeshNormalMaterial({ color }); // 法線（テスト用）
@@ -222,7 +231,7 @@ scene.addEventListener("enter-vr", () => {
 });
 
 scene.addEventListener("exit-vr", () => {
-  scene.setAttribute("background", "color: white");
+  scene.setAttribute("background", `color: #${bgColor.toString(16).padStart(6, "0")}`);
   el.setAttribute("position", { x: -w * 8, y: 2.1, z: -1 });
 });
 
