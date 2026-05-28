@@ -31,7 +31,17 @@ const parseColor = (name, defaultColor) => {
 };
 const lineColor = parseColor("color", 0xffffff);
 const bgColor = parseColor("bgcolor", 0x000000);
+const immersiveLogoBottomY = 1.2;
 scene.setAttribute("background", `color: #${bgColor.toString(16).padStart(6, "0")}`);
+
+const isImmersiveMode = () => scene.is("ar-mode") || scene.is("vr-mode");
+const alignBottomToHeight = (el, y) => {
+  const box = new THREE.Box3().setFromObject(el.object3D);
+  if (!Number.isFinite(box.min.y)) {
+    return;
+  }
+  el.object3D.position.y += y - box.min.y;
+};
 
 const makeElementByObject = (obj, pos) => {
   const el = document.createElement("a-entity");
@@ -211,6 +221,9 @@ AFRAME.registerComponent("jigjp-animation", {
   tick: function (time) {
     const r = Math.cos(time / 1000) / 2 + .5;
     transformJIGJP(this.el, w, r);
+    if (isImmersiveMode()) {
+      alignBottomToHeight(this.el, immersiveLogoBottomY);
+    }
   },
 });
 
@@ -230,7 +243,8 @@ scene.addEventListener("enter-vr", () => {
     return;
   }
   scene.removeAttribute("background");
-  el.setAttribute("position", { x: -w * 8, y: 1.35, z: -1.5 });
+  el.setAttribute("position", { x: -w * 8, y: immersiveLogoBottomY, z: -1.5 });
+  alignBottomToHeight(el, immersiveLogoBottomY);
 });
 
 scene.addEventListener("exit-vr", () => {
