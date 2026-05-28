@@ -226,6 +226,13 @@ const transformJIGJP = (el, w, ratio) => {
   el.setAttribute("scale", { x: 1, y: (1 + t / 7) * 1, z: 1 });
 };
 
+AFRAME.registerComponent("jigjp-animation", {
+  tick: function (time) {
+    const r = Math.cos(time / 1000) / 2 + .5;
+    transformJIGJP(this.el, w, r);
+  },
+});
+
 //const el = makeElementByObject(makeObjectBox(1, 2));
 //const el = makeElementByObject(makeObjectJ(1, 2));
 //const el = makeElementByObject(makeObjectG(1, 2));
@@ -234,6 +241,7 @@ const w = .1;
 const el = makeJIGJP(w);
 el.id = "logo";
 el.setAttribute("position", { x: -w * 8, y: 2.1, z: -1 });
+el.setAttribute("jigjp-animation", "");
 scene.appendChild(el);
 
 scene.addEventListener("enter-vr", () => {
@@ -241,21 +249,13 @@ scene.addEventListener("enter-vr", () => {
     return;
   }
   scene.removeAttribute("background");
-  el.setAttribute("position", { x: -w * 8, y: 0.35, z: -1 });
+  el.setAttribute("position", { x: -w * 8, y: 1.35, z: -1.5 });
 });
 
 scene.addEventListener("exit-vr", () => {
   scene.setAttribute("background", `color: #${bgColor.toString(16).padStart(6, "0")}`);
   el.setAttribute("position", { x: -w * 8, y: 2.1, z: -1 });
 });
-
-const draw = () => {
-  const t = performance.now() / 1000;
-  const r = Math.cos(t) / 2 + .5;
-  transformJIGJP(el, w, r);
-  requestAnimationFrame(draw);
-};
-draw();
 
 document.body.onclick = () => {
   document.body.requestFullscreen();
